@@ -1,11 +1,11 @@
 const Router = require('express').Router
 const router = new Router()
-const userService = require('../services/userService')
+const authService = require('../services/authService')
 const chatService = require('../services/chatService')
 const messageService = require('../services/messageService')
+const tokenService = require('../services/tokenService')
 
-
-router.post('/signin',userService.signin)                                 
-router.post('/signup', userService.signup)                      
-router.get('/getUser/:userId',userService.getUser)  
+router.post('/signin', authService.signin)
+router.post('/signup', authService.signup)
+router.post('/verifyToken', tokenService.verifyToken)
 module.exports = router

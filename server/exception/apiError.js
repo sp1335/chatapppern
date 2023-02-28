@@ -1,4 +1,4 @@
-module.exports = class ApiError extends Error{
+module.exports = class ApiError extends Error {
     status;
     errors;
 
@@ -7,14 +7,14 @@ module.exports = class ApiError extends Error{
         this.status = status;
         this.errors = errors
     }
-    
-    static unAuthorized(){
-        return new ApiError(401,'User not authorized')
+
+    static unAuthorized() {
+        return new ApiError(401, 'User not authorized')
     }
-    static badRequest(message, errors=[]){
-        return new ApiError(400, message,errors)
+    static badRequest(message, errors = []) {
+        return new ApiError(400, message, errors)
     }
-    static conflict(message,errors=[]){
+    static conflict(message, errors = []) {
         return new ApiError(409, message, errors);
     }
 }
