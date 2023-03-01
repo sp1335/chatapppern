@@ -42,6 +42,22 @@ class TokenService {
             }
         }
     }
+    async deleteToken(req, res) {
+        const { user_id } = req.body;
+        const deleteTokensQuery = 'DELETE FROM public.tokens WHERE user_id = $1';
+        const pool = new Pool(DB_CREDITS_PARSED);
+        const client = await pool.connect();
+
+        try {
+            await client.query(deleteTokensQuery, [user_id]);
+            return res.status(200).json({ message: 'Tokens deleted successfully' });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ message: 'Server Error' });
+        } finally {
+            client.release();
+        }
+    }
     async verifyToken(req, res) {
         const { access_token, user_id } = req.body
         const checkTokensQuery = 'SELECT * FROM public.tokens WHERE user_id = $1'
@@ -51,16 +67,18 @@ class TokenService {
             const checkToken = await client.query(checkTokensQuery, [user_id])
             if (checkToken.rowCount !== 0) {
                 const actualToken = checkToken.rows[0].access_token
-                if (access_token === actualToken) {
-                    if (jwt.decode(actualToken).exp < Date.now() / 1000) { res.status(498).json({message:'Token expired'})}
-                    else{res.status(200).json({message:'Token ok'})}
-                } else {
-                    res.status(498).json('Invalide token')
+                try {
+                    const decodedToken = jwt.verify(access_token, process.env.JWT_ACCESS_SECRET)
+                } catch (error) {
+                    return res.status(496).json({ message: 'Invalide or expired token' })
                 }
+                if (actualToken === access_token) { return res.status(200).json({ message: 'Token validity confirmed!' }) }
+                else { return res.status(401).json({ message: 'Unauthorized HTTP.' }) }
             }
         } catch (error) {
-            console.log(error)
             res.status(500).json(error)
+        } finally {
+            client.release()
         }
     }
 }

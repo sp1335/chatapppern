@@ -8,4 +8,5 @@ const tokenService = require('../services/tokenService')
 router.post('/signin', authService.signin)
 router.post('/signup', authService.signup)
 router.post('/verifyToken', tokenService.verifyToken)
+router.post('/signout', authService.signout)
 module.exports = router
