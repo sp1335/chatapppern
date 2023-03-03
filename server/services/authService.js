@@ -35,12 +35,13 @@ class AuthService {
         }
     }
     async signin(req, res, next) {
-        const { name, password } = req.body
+        const { username, password } = req.body
+        console.log(req.body)
         const client = new Client(DB_CREDITS_PARSED)
         try {
             const checkQuery = 'SELECT * FROM public.user WHERE name = $1'
             await client.connect()
-            const user = (await client.query(checkQuery, [name])).rows[0]
+            const user = (await client.query(checkQuery, [username])).rows[0]
             if (!user) {
                 return res.status(401).json({ message: 'No user with this name found' })
             }
@@ -49,7 +50,8 @@ class AuthService {
                 try {
                     const userDto = new UserDto([user.email, user.user_id, user.role])
                     const tokens = tokenService.generateTokens({ ...userDto })
-                    res.cookie('access-token', tokens.accessToken, { httpOnly: true })
+                    res.cookie('access-token', tokens.accessToken, { httpOnly: false, maxAge: 1000 * 60 * 60 * 24 * 7, sameSite: 'none', secure: false })
+
                     res.status(200).json({ message: "Signed in succesfully" })
                 } catch (error) {
                     console.log(error)

@@ -27,7 +27,6 @@
 .App-link {
   color: #61dafb;
 }
-
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -35,4 +34,26 @@
   to {
     transform: rotate(360deg);
   }
+}
+.AuthComponent{
+  margin: 15vh auto;
+  width: 25vw;
+  padding: 5vh 0;
+}
+.AuthComponent form{
+  width: 80%;
+  gap: 2vh;
+}
+.AuthComponent div,input{
+  margin: 0 auto;
+  width: 100%
+}
+.show-error {
+  height: 2vh;
+  opacity: 0;
+  transition: opacity 2s ease-in-out;
+}
+.hide-error{
+  height: 2vh;
+  opacity: 1;
 }
