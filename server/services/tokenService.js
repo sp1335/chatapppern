@@ -1,10 +1,15 @@
 const jwt = require('jsonwebtoken')
 const { Pool } = require('pg')
 const DB_CREDITS_PARSED = JSON.parse(process.env.DB_CREDITS)
+const userService = require('./userService')
+const UserDto = require('../dtos/userDto')
 
 class TokenService {
+    constructor() {
+        this.verifyToken = this.verifyToken.bind(this)
+    }
     generateTokens(payload) {
-        const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, { expiresIn: '30m' })
+        const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, { expiresIn: '1s' })
         const refreshPayload = { "userid": payload.userid, "tokentype": "refresh" }
         const refreshToken = jwt.sign(refreshPayload, process.env.JWT_ACCESS_SECRET, { expiresIn: '30d' })
         const tokens = { accessToken, refreshToken }
@@ -70,16 +75,34 @@ class TokenService {
                 try {
                     const decodedToken = jwt.verify(access_token, process.env.JWT_ACCESS_SECRET);
                 } catch (error) {
-                    if (error instanceof jwt.JsonWebTokenError) {
+                    if (error instanceof jwt.TokenExpiredError) {
+                        const { userDto } = await userService.fetchUserDto(user_id);
+                        console.log('Old token: ',access_token)
+                        try {
+                            const newTokens = this.generateTokens({ ...userDto });
+                            console.log('New token: ',newTokens.accessToken)
+                            res.clearCookie('access_token')
+                            // res.cookie('access_token', newTokens.accessToken, { httpOnly: false, maxAge: 1000 * 60 * 60 * 24 * 7, sameSite: 'strict', secure: false })
+                            return res.status(200).json({ message: 'Token has been regenerated' });
+                        } catch (error) {
+                            console.log('here')
+                            console.log(error)
+                        }
+
+                    } else if (error instanceof jwt.JsonWebTokenError) {
                         return res.status(496).json({ message: 'Invalid token.' });
-                    } else if (error instanceof jwt.TokenExpiredError) {
-                        return res.status(401).json({ message: 'Expired token.' });
+
                     } else {
                         return res.status(498).json({ message: 'Unknown token error.' });
                     }
                 }
-                if (actualToken === access_token) { return res.status(200).json({ message: 'Token validity confirmed!' }) }
-                else { return res.status(401).json({ message: 'Unauthorized HTTP.' }) }
+                if (actualToken === access_token) {
+                    const userData = await userService.fetchUserDto(user_id);
+                    const { userPublic } = userData
+                    return res.status(200).json({ message: `Token validity confirmed`, user: userPublic })
+                } else {
+                    return res.status(401).json({ message: 'Unauthorized HTTP.', jopa: 'hui' })
+                }
             }
         } catch (error) {
             res.status(500).json(error)
