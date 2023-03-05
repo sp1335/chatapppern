@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import bcrypt from 'bcryptjs';
-export default function Auth() {
+export default function Auth(props) {
   const [authState, setAuthState] = useState(true)
-  const [errorState, seterrorState] = useState('')
+  const {errorState, seterrorState} = props
   const API_URL = process.env.REACT_APP_API_URL
   const handleAuthState = (e) => {
     e.preventDefault()
@@ -15,7 +14,7 @@ export default function Auth() {
       seterrorState('')
     }, 5000)
   }
-  async function handleAuth(e) {
+  async function handleAuth(e, p) {
     e.preventDefault()
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
     const nameRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
@@ -28,10 +27,17 @@ export default function Auth() {
     } else {
       if (authState) {
         try {
-          await axios.post(`${API_URL}/signin`,{username,password})
-          .then((res)=>{
-            // window.location.href = '/';
+          await axios.post(`${API_URL}/signin`, { username, password }, {
+            withCredentials: true,
+            credentials: 'include',
           })
+            .then((res) => {
+              if (res.data.status === 200) {
+                window.location.href = '/';
+              } else {
+                alert('Invalid phone number or password. Please try again')
+              }
+            })
         } catch (error) {
           return changeErrorLabel(error.message)
         }
@@ -41,12 +47,11 @@ export default function Auth() {
         if (!passwordRegex.test(password)) return changeErrorLabel('Invalid email')
         alert("Form submited OK")
       }
-
     }
   }
   const signUpForm = () => {
     return (
-      <form className='d-flex flex-column mt-3' onSubmit={handleAuth}>
+      <form className='d-flex flex-column rounded' onSubmit={handleAuth}>
         <div>
           <label className='text'>Username</label>
           <input type="text" className="form-control shadow-none" id='username' placeholder='Username' />
@@ -79,7 +84,7 @@ export default function Auth() {
     )
   }
   return (
-    <div className='AuthComponent d-flex flex-column rounded border align-items-md-center pb-5'>
+    <div className='AuthComponent d-flex flex-column rounded border align-items-md-center pb-5 shadow bg-white rounded'>
       <h2>Шо ты дядя</h2>
       <label className={`text-danger fs-6 errorLabel ${errorState ? 'show-error' : 'hide-error'}`}>{errorState}</label>
       {authState ? signInForm() : signUpForm()}

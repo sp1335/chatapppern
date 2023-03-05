@@ -25,8 +25,8 @@ class AuthService {
                 await client.query(insertQuery, [userid, name, email, hashedPassword])
                 const userDto = new UserDto([email, userid, 4]);
                 const tokens = tokenService.generateTokens({ ...userDto })
-                res.cookie('access-token', tokens.accessToken, { httpOnly: true })
-                res.status(200).json({ message: 'Signed up succesfully' })
+                return [res.cookies('access-token', tokens.accessToken, { httpOnly: true }), res.status(200).json({ message: 'Signed up succesfully' })]
+
             }
         } catch (error) {
             res.status(error.status || 500).json({ message: error.message, errors: error.errors });
@@ -36,7 +36,6 @@ class AuthService {
     }
     async signin(req, res, next) {
         const { username, password } = req.body
-        console.log(req.body)
         const client = new Client(DB_CREDITS_PARSED)
         try {
             const checkQuery = 'SELECT * FROM public.user WHERE name = $1'
@@ -50,9 +49,9 @@ class AuthService {
                 try {
                     const userDto = new UserDto([user.email, user.user_id, user.role])
                     const tokens = tokenService.generateTokens({ ...userDto })
-                    res.cookie('access-token', tokens.accessToken, { httpOnly: false, maxAge: 1000 * 60 * 60 * 24 * 7, sameSite: 'none', secure: false })
-
-                    res.status(200).json({ message: "Signed in succesfully" })
+                    res.cookie('access_token', tokens.accessToken, { httpOnly: false, maxAge: 1000 * 60 * 60 * 24 * 7, sameSite: 'strict', secure: false })
+                    res.cookie('user_id', userDto.userid, { httpOnly: false, maxAge: 1000 * 60 * 60 * 24 * 7, sameSite: 'strict', secure: false })
+                    res.status(200).json({ status: 200, message: "Signed in succesfully" })
                 } catch (error) {
                     console.log(error)
                 }
@@ -67,7 +66,6 @@ class AuthService {
         }
     }
     async signout(req, res, next) {
-        
         const accessToken = req.headers.cookie.split('=')[1];
         console.log(accessToken)
         if (!accessToken) {

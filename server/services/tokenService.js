@@ -68,9 +68,15 @@ class TokenService {
             if (checkToken.rowCount !== 0) {
                 const actualToken = checkToken.rows[0].access_token
                 try {
-                    const decodedToken = jwt.verify(access_token, process.env.JWT_ACCESS_SECRET)
+                    const decodedToken = jwt.verify(access_token, process.env.JWT_ACCESS_SECRET);
                 } catch (error) {
-                    return res.status(496).json({ message: 'Invalide or expired token' })
+                    if (error instanceof jwt.JsonWebTokenError) {
+                        return res.status(496).json({ message: 'Invalid token.' });
+                    } else if (error instanceof jwt.TokenExpiredError) {
+                        return res.status(401).json({ message: 'Expired token.' });
+                    } else {
+                        return res.status(498).json({ message: 'Unknown token error.' });
+                    }
                 }
                 if (actualToken === access_token) { return res.status(200).json({ message: 'Token validity confirmed!' }) }
                 else { return res.status(401).json({ message: 'Unauthorized HTTP.' }) }
