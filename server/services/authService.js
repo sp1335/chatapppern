@@ -26,7 +26,6 @@ class AuthService {
                 const userDto = new UserDto([email, userid, 4]);
                 const tokens = tokenService.generateTokens({ ...userDto })
                 return [res.cookie('access_token', tokens.accessToken, { httpOnly: false, maxAge: 1000 * 60 * 60 * 24 * 7, sameSite: 'strict', secure: false })]
-
             }
         } catch (error) {
             res.status(error.status || 500).json({ message: error.message, errors: error.errors });

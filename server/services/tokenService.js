@@ -9,7 +9,7 @@ class TokenService {
         this.verifyToken = this.verifyToken.bind(this)
     }
     generateTokens(payload) {
-        const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, { expiresIn: '1s' })
+        const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, { expiresIn: '30m' })
         const refreshPayload = { "userid": payload.userid, "tokentype": "refresh" }
         const refreshToken = jwt.sign(refreshPayload, process.env.JWT_ACCESS_SECRET, { expiresIn: '30d' })
         const tokens = { accessToken, refreshToken }
@@ -64,7 +64,7 @@ class TokenService {
         }
     }
     async verifyToken(req, res) {
-        const { access_token, user_id } = req.body
+        const { access_token, user_id } = req.cookies
         const checkTokensQuery = 'SELECT * FROM public.tokens WHERE user_id = $1'
         const pool = new Pool(DB_CREDITS_PARSED)
         const client = await pool.connect()
@@ -77,19 +77,15 @@ class TokenService {
                 } catch (error) {
                     if (error instanceof jwt.TokenExpiredError) {
                         const { userDto } = await userService.fetchUserDto(user_id);
-                        console.log('Old token: ',access_token)
                         try {
                             const newTokens = this.generateTokens({ ...userDto });
-                            console.log('New token: ',newTokens.accessToken)
-                            res.clearCookie('access_token')
-                            // res.cookie('access_token', newTokens.accessToken, { httpOnly: false, maxAge: 1000 * 60 * 60 * 24 * 7, sameSite: 'strict', secure: false })
-                            return res.status(200).json({ message: 'Token has been regenerated' });
+                            res.cookie('access_token', newTokens.accessToken, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7, sameSite: 'strict', secure: true });
+                            return [res.status(200).json({ message: 'Token has been regenerated' })]
                         } catch (error) {
-                            console.log('here')
                             console.log(error)
                         }
-
                     } else if (error instanceof jwt.JsonWebTokenError) {
+                        console.log(error)
                         return res.status(496).json({ message: 'Invalid token.' });
 
                     } else {
@@ -101,7 +97,7 @@ class TokenService {
                     const { userPublic } = userData
                     return res.status(200).json({ message: `Token validity confirmed`, user: userPublic })
                 } else {
-                    return res.status(401).json({ message: 'Unauthorized HTTP.', jopa: 'hui' })
+                    return res.status(401).json({ message: 'Unauthorized HTTP.' })
                 }
             }
         } catch (error) {

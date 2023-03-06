@@ -15,7 +15,7 @@ function App() {
       axios.post(`${API_URL}/verifyToken`,
         {
           user_id, access_token
-        })
+        },{ withCredentials: true })
         .then((res) => { console.log(res.data) })
         .catch((err) => {
           seterrorState(err.response.data.message)
