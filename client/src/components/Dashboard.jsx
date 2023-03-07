@@ -1,13 +1,20 @@
 import Cookies from 'js-cookie'
 import React from 'react'
-
+import Sidepanel from './Sidepanel'
+import Chatblock from './Chatblock'
+import Rightpanel from './Rightpanel'
+import Loading from './Loading'
 export default function Dashboard(props) {
-  const {errorState, setErrorState} = props
+  const { errorState, setErrorState, user } = props
   return (
     <>
-      <h1>Dashboard</h1>
-      <h3>Welcome, {Cookies.get('user_id')}</h3>
-      <label className='text-danger'>{errorState}</label>
+      {user ?
+        <div className='Dashboard'>
+          < Sidepanel user={user} />
+          <Chatblock />
+          <Rightpanel />
+        </div >
+        : <Loading />}
     </>
   )
 }

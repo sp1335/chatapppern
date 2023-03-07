@@ -2,8 +2,6 @@ const jwt = require('jsonwebtoken')
 const { Pool } = require('pg')
 const DB_CREDITS_PARSED = JSON.parse(process.env.DB_CREDITS)
 const userService = require('./userService')
-const UserDto = require('../dtos/userDto')
-
 class TokenService {
     constructor() {
         this.verifyToken = this.verifyToken.bind(this)
@@ -19,6 +17,9 @@ class TokenService {
             return error
         }
         return tokens
+    }
+    async tokenVerifyLogic(access_token, user_id){
+        
     }
     async storeTokens(user, tokens) {
         const userid = user.userid

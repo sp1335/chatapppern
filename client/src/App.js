@@ -8,6 +8,7 @@ import Cookies from 'js-cookie';
 
 function App() {
   const { user_id, access_token } = Cookies.get()
+  const [user, setuser] = useState()
   const [errorState, seterrorState] = useState('')
   useEffect(() => {
     if (Cookies.get() !== {}) {
@@ -16,7 +17,7 @@ function App() {
         {
           user_id, access_token
         },{ withCredentials: true })
-        .then((res) => { console.log(res.data) })
+        .then((res) => { setuser(res.data.user) })
         .catch((err) => {
           seterrorState(err.response.data.message)
           const errorCode = err.response.status
@@ -36,7 +37,7 @@ function App() {
   return (
     <>
       <Routes>
-        <Route path='*' element={Object.keys(Cookies.get()).length === 0 ? <Auth errorState={errorState} seterrorState={seterrorState} /> : <Dashboard errorState={errorState} seterrorState={seterrorState} />}></Route>
+        <Route path='*' element={Object.keys(Cookies.get()).length === 0 ? <Auth errorState={errorState} seterrorState={seterrorState} /> : <Dashboard errorState={errorState} seterrorState={seterrorState} user={user} />}></Route>
         <Route path='/auth' element={<Auth errorState={errorState} seterrorState={seterrorState} />} />
       </Routes>
     </>

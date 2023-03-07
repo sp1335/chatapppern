@@ -4,9 +4,12 @@ const authService = require('../services/authService')
 const chatService = require('../services/chatService')
 const messageService = require('../services/messageService')
 const tokenService = require('../services/tokenService')
+const userService = require('../services/userService')
 
 router.post('/signin', authService.signin)
 router.post('/signup', authService.signup)
 router.post('/verifyToken', tokenService.verifyToken)
 router.post('/signout', authService.signout)
+router.post('/fetchRoomList', userService.fetchUserRoomlist)
+
 module.exports = router

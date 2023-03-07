@@ -8,12 +8,13 @@ const DB_CREDITS_PARSED = JSON.parse(process.env.DB_CREDITS)
 
 class AuthService {
     async signup(req, res) {
-        const { name, password, email } = req.body
+        const { username, password, email } = req.body
         const client = new Client(DB_CREDITS_PARSED)
         try {
             const checkQuery = 'SELECT COUNT(*) FROM public.user WHERE email = $1 OR name = $2'
             await client.connect()
-            const candidate = await client.query(checkQuery, [email, name])
+            const candidate = await client.query(checkQuery, [email, username])
+            console.log(candidate)
             const candidateCheck = candidate.rows[0].count
             if (candidateCheck > 0) {
                 throw new ApiError(409, "User with this email or name already exists.")
@@ -22,10 +23,12 @@ class AuthService {
                 const salt = await bcrypt.genSalt(10)
                 const hashedPassword = await bcrypt.hash(password, salt)
                 const insertQuery = 'INSERT INTO public.user (user_id, name, email, password, role, photo_url, creation_date, last_activity) VALUES ($1,$2,$3,$4,4,1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)'
-                await client.query(insertQuery, [userid, name, email, hashedPassword])
+                await client.query(insertQuery, [userid, username, email, hashedPassword])
                 const userDto = new UserDto([email, userid, 4]);
                 const tokens = tokenService.generateTokens({ ...userDto })
-                return [res.cookie('access_token', tokens.accessToken, { httpOnly: false, maxAge: 1000 * 60 * 60 * 24 * 7, sameSite: 'strict', secure: false })]
+                res.cookie('access_token', tokens.accessToken, { httpOnly: false, maxAge: 1000 * 60 * 60 * 24 * 7, sameSite: 'strict', secure: false })
+                res.cookie('user_id', userDto.userid, { httpOnly: false, maxAge: 1000 * 60 * 60 * 24 * 7, sameSite: 'strict', secure: false })
+                res.status(200).json({ status: 200, message: "Signed up succesfully" })
             }
         } catch (error) {
             res.status(error.status || 500).json({ message: error.message, errors: error.errors });
@@ -65,17 +68,24 @@ class AuthService {
         }
     }
     async signout(req, res) {
-        const accessToken = req.headers.cookie.split('=')[1];
-        console.log(accessToken)
+        console.log(req.headers)
+        const accessToken = (req.headers.cookie.split('=')[1]).split(';')[0];
         if (!accessToken) {
             return res.status(401).json({ message: "You're not logged in." });
         }
         const client = new Client(DB_CREDITS_PARSED);
         try {
+            const searchTokens = ' SELECT * FROM public.tokens WHERE access_token = $1'
             const deleteQuery = 'DELETE FROM public.tokens WHERE access_token = $1';
             await client.connect();
-            await client.query(deleteQuery, [accessToken]);
-            res.clearCookie('access-token');
+            try {
+                const tokens = await client.query(searchTokens,[accessToken])
+                await client.query(deleteQuery, [accessToken]);
+            } catch (error) {
+                console.log(error)
+            }
+            res.clearCookie('access_token');
+            res.clearCookie('user_id');
             res.status(200).json({ message: 'Logged out successfully' });
         } catch (error) {
             console.log(error);
