@@ -14,7 +14,7 @@ export default function Auth(props) {
       seterrorState('')
     }, 1500)
   }
-  async function handleAuth(e, p) {
+  async function handleAuth(e) {
     e.preventDefault()
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
     const nameRegex = /^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*$/
@@ -30,14 +30,12 @@ export default function Auth(props) {
             credentials: 'include',
           })
             .then((res) => {
-              if (res.data.status === 200) {
+              if (res.status === 200) {
                 window.location.href = '/';
-              } else {
-                alert('Invalid phone number or password. Please try again')
               }
             })
         } catch (error) {
-          return changeErrorLabel(error.response.data.message)
+          return changeErrorLabel(error.response.data)
         }
       } else {
         const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
@@ -49,15 +47,14 @@ export default function Auth(props) {
             credentials: 'include',
           })
             .then((res) => {
-              if (res.data.status === 200) {
+              if (res.status === 200) {
                 window.location.href = '/';
               } else {
                 console.log('Invalid phone number or password. Please try again')
               }
             })
         } catch (error) {
-          console.log(error)
-          return changeErrorLabel(error.response.data.message)
+          return changeErrorLabel(error.response.data)
         }
       }
     }

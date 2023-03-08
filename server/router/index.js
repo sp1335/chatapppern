@@ -1,15 +1,15 @@
 const Router = require('express').Router
 const router = new Router()
-const authService = require('../services/authService')
-const chatService = require('../services/chatService')
-const messageService = require('../services/messageService')
-const tokenService = require('../services/tokenService')
+// controllers
+const authControllers = require('../controllers/authControllers')
+const tokenControllers = require('../controllers/tokenControllers')
 const userService = require('../services/userService')
 
-router.post('/signin', authService.signin)
-router.post('/signup', authService.signup)
-router.post('/verifyToken', tokenService.verifyToken)
-router.post('/signout', authService.signout)
+
+router.post('/signin',  authControllers.signin)
+router.post('/signup', authControllers.signup)
+router.post('/signout', authControllers.signout)
+router.post('/verifyToken', tokenControllers.verifyToken)
 router.post('/fetchRoomList', userService.fetchUserRoomlist)
 
 module.exports = router

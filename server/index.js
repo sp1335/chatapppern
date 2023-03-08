@@ -25,5 +25,4 @@ const startServer = () => {
         console.log(error)
     }
 }
-
 startServer()

@@ -1,25 +1,26 @@
 import axios from 'axios';
 import React from 'react'
 import RoomsList from './RoomsList'
+import Cookies from 'js-cookie';
+
 function Sidepanel(props) {
     const { user } = props
     const handleLogout = async (e) => {
         const API_URL = process.env.REACT_APP_API_URL
         e.preventDefault();
-        try {
-            await axios.post(`${API_URL}/signout`, {}, {
-                withCredentials: true,
-                credentials: 'include'
+        if (Cookies.get() !== {}) {
+            axios.post(`${API_URL}/signout`,
+                {},
+                {
+                    withCredentials: true,
+                    credentials: 'include',
+                }
+            ).then((res) => {
+                if (res.status === 200)
+                    window.location.href = '/';
+            }).catch((err) => {
+                console.log(err)
             })
-                .then((res) => {
-                    if (res.status === 200) {
-                        window.location.href = '/';
-                    } else {
-                        console.log(res.data.message)
-                    }
-                })
-        } catch (error) {
-            return console.log(error.message)
         }
     }
     return (
@@ -35,7 +36,7 @@ function Sidepanel(props) {
                 <div className='SidepanelSearch'>
                     <input type="text" className='form-control' placeholder='Find chat' />
                 </div>
-                <RoomsList user={user}/>
+                <RoomsList user={user} />
                 <div className='d-flex '><button className='btn btn-light logOutBtn' onClick={handleLogout}>Log out</button></div>
             </div >
         </>

@@ -1,12 +1,26 @@
+const tokenService = require('../services/tokenService');
+function storeAuthCookie(res, response) {
+    const cookieAge = 1000 * 60 * 60 * 24
+    const cookieConfig = {
+        httpOnly: false,
+        maxAge: cookieAge,
+        sameSite: 'strict',
+        secure: false
+    }
+    res.cookie('access_token', response.access_token, cookieConfig)
+}
 async function verifyToken(req, res) {
     const { access_token, user_id } = req.cookies
-    const result = await verifyTokenLogic(access_token, user_id);
-    if (result.tokenRegenerated) {
-        res.cookie('access_token', result.newAccessToken, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7, sameSite: 'strict', secure: true });
-        return res.status(200).json({ message: 'Token has been regenerated' });
-    } else if (result.validToken) {
-        return res.status(200).json({ message: `Token validity confirmed`, user: result.user });
+    const response = await tokenService.verifyToken(access_token, user_id)
+    if (response && response.status === 200) {
+        const { message, user } = response
+        res.status(response.status).json({ message, user })
+    } else if (response && response.status === 201) {
+        storeAuthCookie(res, response)
+        const {message, user} = response
+        res.status(response.status).json({message, user })
     } else {
-        return res.status(401).json({ message: result.error || 'Unauthorized HTTP.' });
+        res.status(response.status).json(response.message)
     }
 }
+module.exports = { verifyToken };
