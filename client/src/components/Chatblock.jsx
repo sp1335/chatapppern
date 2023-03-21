@@ -75,7 +75,7 @@ function Chatblock() {
           ))}
         </ul>
         <form onSubmit={sendMessage} className='sendblock input-group'>
-          <input type="text" placeholder='Type your message'className="form-control" />
+          <input type="text" placeholder='Type your message' className="form-control" />
           <button type='submit' className='btn btn-light d-flex'>Send</button>
         </form>
       </div>
