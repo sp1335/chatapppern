@@ -10,6 +10,5 @@ router.post('/signin',  authControllers.signin)
 router.post('/signup', authControllers.signup)
 router.post('/signout', authControllers.signout)
 router.post('/verifyToken', tokenControllers.verifyToken)
-router.post('/fetchRoomList', userService.fetchUserRoomlist)
 
 module.exports = router

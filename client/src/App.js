@@ -1,4 +1,5 @@
-import './App.css';
+import './css/App.css';
+import './css/Chat.css';
 import Dashboard from './components/Dashboard';
 import React, { useState, useEffect } from 'react'
 import Auth from './components/Auth';
@@ -9,7 +10,6 @@ import Cookies from 'js-cookie';
 function App() {
   const [user, setuser] = useState()
   const [errorState, seterrorState] = useState('')
-
   const API_URL = process.env.REACT_APP_API_URL
 
   useEffect(() => {
@@ -32,7 +32,6 @@ function App() {
     <>
       <Routes>
         <Route path='*' element={Object.keys(Cookies.get()).length === 0 ? <Auth errorState={errorState} seterrorState={seterrorState} /> : <Dashboard errorState={errorState} seterrorState={seterrorState} user={user} />}></Route>
-        <Route path='/auth' element={<Auth errorState={errorState} seterrorState={seterrorState} />} />
       </Routes>
     </>
   );

@@ -3,7 +3,6 @@ const bcrypt = require('bcrypt')
 const { v4: uuidv4 } = require('uuid')
 const tokenService = require('./tokenService')
 const UserDto = require('../dtos/userDto')
-const ApiError = require('../exception/apiError')
 
 class AuthService {
     async signup(username, password, email) {

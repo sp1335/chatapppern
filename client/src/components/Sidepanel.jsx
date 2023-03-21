@@ -25,7 +25,7 @@ function Sidepanel(props) {
     }
     return (
         <>
-            <div className='Sidepanel shadow bg-white'>
+            <div className='Sidepanel'>
                 < div className='userInfo' >
                     <div className='userAva avaColor'></div>
                     <div className='userInfoText'>
