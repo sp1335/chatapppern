@@ -1,10 +1,21 @@
 require('dotenv').config()
 const cors = require('cors')
+
 const router = require('./router/index')
 const express = require('express')
 const cookieParser = require('cookie-parser')
 const port = process.env.API_PORT
 const app = express()
+
+const http = require('http')
+const server = http.createServer(app)
+const io = require('socket.io')(server, {
+    cors: {
+        origin: 'http://localhost:3000',
+        methods: ['GET', 'POST'],
+        credentials: true
+    }
+})
 
 app.use(express.json())
 app.use(cors({ credentials: true, origin: process.env.CLIENT_URL }))
@@ -20,9 +31,10 @@ app.use((res) => {
 
 const startServer = () => {
     try {
-        app.listen(port, () => {
+        server.listen(port, () => {
             console.log(`Server is listening at port ${port}`)
         })
+        require('./router/socket')(io);
     } catch (error) {
         console.log(error)
     }

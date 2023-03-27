@@ -35,7 +35,7 @@ class TokenService {
                             try {
                                 const newTokens = this.generateTokens({ ...userDto });
                                 const newAccessToken = newTokens.accessToken
-                                return { status: 201, message: 'Token has been regenerated', access_token:newAccessToken }
+                                return { status: 201, message: 'Token has been regenerated', access_token: newAccessToken }
                             } catch (error) {
                                 return { status: 500, message: 'Unknown token error' }
                             }
@@ -68,16 +68,6 @@ class TokenService {
         } catch (error) {
             console.log(error)
             return { status: 500, message: 'Server Error' }
-        }
-    }
-    async deleteToken(req, res) {
-        const { user_id } = req.body;
-        const deleteTokensQuery = 'DELETE FROM public.tokens WHERE user_id = $1';
-        try {
-            await pool.query(deleteTokensQuery, [user_id]);
-            return res.status(200).json({ message: 'Tokens deleted successfully' });
-        } catch (error) {
-            return res.status(500).json({ message: 'Server Error' });
         }
     }
 }

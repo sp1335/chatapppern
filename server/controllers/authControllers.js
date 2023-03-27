@@ -30,7 +30,7 @@ async function signup(req, res) {
 async function signout(req, res) {
     const { access_token } = req.cookies
     const response = await authService.signout(access_token)
-    if(response&& response.status === 200){res.clearCookie('access_token');res.clearCookie('user_id');res.clearCookie('user_role');}
+    if(response&& response.status === 200){res.clearCookie('access_token');res.clearCookie('socketID');res.clearCookie('user_id');res.clearCookie('user_role');}
     return res.status(response.status).json(response.message)
 }
 

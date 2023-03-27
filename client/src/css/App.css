@@ -72,9 +72,9 @@ input {
 
 .Sidepanel {
   z-index: 998;
-  -webkit-box-shadow: 0px 0px 10px 0px rgba(66, 68, 90, 1);
-  -moz-box-shadow: 0px 0px 10px 0px rgba(66, 68, 90, 1);
-  box-shadow: 0px 0px 10px 0px rgba(66, 68, 90, 1);
+  -webkit-box-shadow: 0px 0px 10px 0px rgba(66, 68, 90, 0.5);
+  -moz-box-shadow: 0px 0px 10px 0px rgba(66, 68, 90, 0.5);
+  box-shadow: 0px 0px 10px 0px rgba(66, 68, 90, 0.5);
   padding: 0 !important;
   margin: 0;
   width: 25vw;
@@ -89,9 +89,9 @@ input {
 
 .Rightpanel {
   z-index: 998;
-  -webkit-box-shadow: 0px 0px 10px 0px rgba(66, 68, 90, 1);
-  -moz-box-shadow: 0px 0px 10px 0px rgba(66, 68, 90, 1);
-  box-shadow: 0px 0px 10px 0px rgba(66, 68, 90, 1);
+  -webkit-box-shadow: 0px 0px 10px 0px rgba(66, 68, 90, 0.5);
+  -moz-box-shadow: 0px 0px 10px 0px rgba(66, 68, 90, 0.5);
+  box-shadow: 0px 0px 10px 0px rgba(66, 68, 90, 0.5);
   width: 25vw;
   background-color: rgb(255, 252, 69);
 }
