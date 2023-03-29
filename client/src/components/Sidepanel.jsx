@@ -36,7 +36,7 @@ function Sidepanel(props) {
                 <div className='SidepanelSearch'>
                     <input type="text" className='form-control' placeholder='Find chat' />
                 </div>
-                <RoomsList user={user} chatHistory={chatHistory} setChatHistory={setChatHistory}/>
+                <RoomsList user={user} setChatHistory={setChatHistory}/>
                 <div className='d-flex '><button className='btn btn-light logOutBtn' onClick={handleLogout}>Log out</button></div>
             </div >
         </>

@@ -11,12 +11,16 @@ function Chatblock(props) {
   })
   useEffect(() => {
     if (chatHistory.history) {
-      setMessageList([])
-      const messages = chatHistory.history.data
-      console.log(messages)
-      messages.slice().reverse().map((message,index)=>{
-        setMessageList(prevState => [...prevState, [message.message_type, message.message_body, message.roommate_user_user_id, message.event_timestamp]])
-      })
+      if (chatHistory.history.data) {
+        setMessageList([])
+        const messages = chatHistory.history.data
+        messages.slice().reverse().map((message, index) => {
+          setMessageList(prevState => [...prevState, [message.message_type, message.message_body, message.roommate_user_user_id, message.event_timestamp]])
+        })
+      } else {
+        setMessageList([['infomessage', 'No messages yet...']])
+      }
+      console.log(chatHistory)
     }
   }, [chatHistory])
   useEffect(() => {
@@ -26,16 +30,23 @@ function Chatblock(props) {
         user_id: user_id
       })
     }
-    socket.on('message', (message) => {
+    socket.on('newMessage', (message) => {
+      console.log(message)
       if (message === '') { console.log('empty') }
-      setMessageList(prevState => [...prevState, [message.messageType, message.message, message.id]])
+      console.log(message)
+      setMessageList(prevState => [...prevState, [message.messageType, message.message, message.id, message.timestamp]])
     })
   }, [])
   const sendMessage = (e) => {
     e.preventDefault()
-    const message = e.target.querySelector('input').value;
-    e.target.querySelector('input').value = ''
-    socket.emit('message', [message, user_id])
+    const messagetext = e.target.querySelector('input').value;
+    if (messagetext !== '') {
+      e.target.querySelector('input').value = ''
+      socket.emit('message', { message: messagetext, "user_id": user_id, token: access_token, chat_id: chatHistory.history.chat_info.chat_id })
+    }
+    else {
+      return
+    }
   }
   function Message(prop) {
     const messageType = prop.prop[0]
@@ -51,7 +62,7 @@ function Chatblock(props) {
       if (id === user_id) {
         return (
           <div className='d-flex'>
-            <li className='usermessage mymessage rounded'>
+            <li className='usermessage mymessage rounded-4'>
               <div>
                 <p>@{id}</p>
                 <p className='timestampP'>{timestamp}</p>
@@ -63,10 +74,10 @@ function Chatblock(props) {
       } else {
         return (
           <div className='d-flex'>
-            <li className='usermessage rounded'>
+            <li className='usermessage rounded-4'>
               <div>
                 <p >@{id}</p>
-                <p className='timestampP'>12:55</p>
+                <p className='timestampP'>{timestamp}</p>
               </div>
               <p className='messageP'>{message}</p>
             </li>
@@ -78,13 +89,14 @@ function Chatblock(props) {
   return (
     <>
       <div className='chatbody'>
-        <h1>Welcome</h1>
+        {chatHistory.history ? <h1>Welcome in {chatHistory.history.chat_info.chat_name}</h1> : <h1>Welcome! Select room to chat</h1>}
+
         <ul>
           {messageList.slice().reverse().map((message, index) => (
             <Message key={index} prop={message}></Message>
           ))}
         </ul>
-        <form className='sendblock input-group'>
+        <form className='sendblock input-group' onSubmit={sendMessage}>
           <input type="text" placeholder='Type your message' className="form-control" />
           <button type='submit' className='btn btn-light d-flex'>Send</button>
         </form>

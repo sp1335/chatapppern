@@ -7,7 +7,7 @@ function RoomsList(props) {
     const socket = io('http://localhost:5000', {
         withCredentials: true
     })
-    const {chatHistory, setChatHistory} = props
+    const { setChatHistory } = props
     const [roomList, setroomList] = useState([])
     const [activeItem, setActiveItem] = useState()
     const API_URL = process.env.REACT_APP_API_URL
@@ -45,12 +45,8 @@ function RoomsList(props) {
     socket.on('join_error', (data) => {
         console.log(data.message)
     })
-    socket.on('history', ({history}) => {
-        if(history.data){
-            setChatHistory({history})
-        }else{
-            console.log('Chat is empty')
-        }
+    socket.on('history', ({ history }) => {
+        setChatHistory({ history })
     })
     return (
         <div className='roomsList container overflow-scroll scrollbar-secondary'>
