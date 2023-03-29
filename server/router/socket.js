@@ -9,16 +9,6 @@ const composeMessage = (message, id) => {
 }
 module.exports = (io) => {
     io.on('connection', (socket) => {
-        // socket.on('existing', (ID) => {
-        //     socket.emit('loggedin', 'Welcome back')
-        //     socket.broadcast.emit('message', composeInfoMessage(`User #${ID} connected`))
-        // })
-
-        // socket.on('login', () => {
-        //     const userID = socket.id
-        //     socket.emit('socketID', userID)
-        //     socket.broadcast.emit('message', composeInfoMessage(`User #${userID} connected`))
-        // })
         socket.on('join', async (credits) => {
             const { token, user_id, chat_id } = credits;
             const tokenValidity = await tokenService.verifyToken(token, user_id)
@@ -28,8 +18,8 @@ module.exports = (io) => {
             } else {
                 const membership = await chatService.joinRoom({ user_id, chat_id })
                 if (membership.status === 200) {
-                    console.log(membership)
-                    socket.emit('history', {history:membership.history.data})
+                    console.log('Chat history: ', membership, ";")
+                    socket.emit('history', { history: membership.history })
                 } else if (membership.status === 500) {
                     console.log('Not member of this chat')
                 } else {
