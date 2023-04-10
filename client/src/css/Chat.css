@@ -103,6 +103,7 @@ li p {
 
 .usermessage {
     max-width: 85%;
+    min-width: 350px;
     background-color: rgb(235, 255, 255);
     flex-direction: column;
     margin: 5px 0;
@@ -162,6 +163,7 @@ li p {
 @media screen and (max-width: 900px){
     .usermessage {
         max-width: 100%;
+        min-width: 100%;
     }
     .chatblock ul div{
         padding: 0 1vh;
