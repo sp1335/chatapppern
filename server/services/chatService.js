@@ -29,7 +29,7 @@ class ChatService {
         const isMember = parseInt(dbres.rows[0].count)
         if (isMember === 1) {
             const lastHundred = await this.fetchHistory(chat_id, 0)
-            return { status: 200, message: 'Vsio zaebis', history: lastHundred }
+            return { status: 200, message: 'Success', history: lastHundred }
         } else {
             return { status: 500, message: 'You are not member of this chat...' }
         }

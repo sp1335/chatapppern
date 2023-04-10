@@ -1,11 +1,11 @@
 .chatbody {
     background-color: white;
-    padding: 3vh 3vh;
     width: 100%;
+    height: 100%;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+
 }
 
 .chatbody h1 {
@@ -13,16 +13,52 @@
     margin: 0;
 }
 
-.chatbody ul {
-    margin-bottom: 0 !important;
-    height: 85%;
-    padding: 0;
+.chatblock {
     display: flex;
-    flex-direction: column-reverse;
+    height: 100vh;
+    justify-content: flex-start !important;
+    width: 100%;
+    z-index: 999;
+    -webkit-box-shadow: 0px 0px 10px 0px rgba(66, 68, 90, 0.5);
+    -moz-box-shadow: 0px 0px 10px 0px rgba(66, 68, 90, 0.5);
+    box-shadow: 0px 0px 10px 0px rgba(66, 68, 90, 0.5);
+    flex-direction: column;
 }
 
+.chatblock h2 {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.chatname {
+    background-color: white;
+    display: flex;
+    width: 100%;
+    margin: 0 auto;
+    z-index: 999;
+    height: 8vh;
+    align-items: center;
+    padding-left: 2vw;
+}
+.chatbody ul {
+    background-size: cover;
+    background-position: center;
+    background-image: url('../components/media/image/chatblockbg2.jpg');
+    width: 100%;
+    overflow-y: scroll;
+    margin: 0 auto;
+    margin-bottom: 0 !important;
+    display: flex;
+    min-height: 87vh;
+    max-height: 87vh;
+    flex-direction: column-reverse;
+    align-items: stretch;
+    padding: 1vh 0;
+}
+
+
 .sendblock {
-    height: 5vh;
+    flex: 3;
     display: flex;
     justify-content: center;
 }
@@ -40,7 +76,7 @@
 
 li {
     list-style: none;
-    padding: 0.5vh 2vh;
+    padding: 1vh 2vh 0 2vh;
 }
 
 li p {
@@ -55,8 +91,8 @@ li p {
 }
 
 .infomessage p {
-    font-size: 15px;
-    color: slategray
+    font-size: 1rem;
+    color: white;
 }
 
 .d-flex {
@@ -66,27 +102,30 @@ li p {
 }
 
 .usermessage {
-    width: fit-content;
-    margin: .5vh 0;
-    margin-right: auto;
-    margin-left: 0;
-    padding: 1vh 2vh 1.5vh 2vh;
-    display: flex;
-    background-color: rgb(237, 246, 255);
+    max-width: 85%;
+    background-color: rgb(235, 255, 255);
     flex-direction: column;
+    margin: 5px 0;
 }
-
+.messageinfo{
+    width: 350px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    padding: 0 !important;
+}
 .mymessage {
     margin-left: auto;
     margin-right: 0;
-    background-color: rgb(215, 235, 255);
+    background-color: rgb(170, 235, 255);
     align-items: flex-end;
+}
+.notmymessage {
+    margin-left: 0;
+    margin-right: auto;
 }
 
 .usermessage div {
     font-size: 12px;
-    display: flex;
-    justify-content: flex-start;
     align-items: center;
     gap: 1vh;
     padding: 0.5vh 1vh 0 0;
@@ -95,15 +134,36 @@ li p {
 .usermessage p {
     color: rgb(163, 163, 163);
 }
-
+.timestamp{
+    display: flex;
+    padding: 6px 0 !important;
+    font-size: .9rem !important;
+    justify-content: space-between;
+}
 .timestampP {
     color: slategray;
 }
 
 .messageP {
+    max-width: 100%;
     color: black !important;
     font-size: 16px;
     flex: 1;
     hyphens: auto;
     padding-right: 1vh;
+    overflow-wrap: break-word;
+    hyphens: manual;
+}
+.chatblock ul div {
+    width: 100%;
+    padding: 0 2vh;
+}
+
+@media screen and (max-width: 900px){
+    .usermessage {
+        max-width: 100%;
+    }
+    .chatblock ul div{
+        padding: 0 1vh;
+    }
 }

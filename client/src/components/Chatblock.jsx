@@ -52,7 +52,12 @@ function Chatblock(props) {
     const messageType = prop.prop[0]
     const message = prop.prop[1]
     const id = prop.prop[2]
+    const publicid = id.substring(id.lastIndexOf('-') + 1)
     const timestamp = prop.prop[3]
+    const date = new Date(timestamp)
+    let localTime = date.toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit' });
+    let localDate = date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' });
+    let formattedDate = localTime + "," + localDate.replace(/\//g, '-');
     if (messageType === 'infomessage') {
       return (
         <li className='infomessage'>
@@ -63,23 +68,23 @@ function Chatblock(props) {
         return (
           <div className='d-flex'>
             <li className='usermessage mymessage rounded-4'>
-              <div>
-                <p>@{id}</p>
-                <p className='timestampP'>{timestamp}</p>
-              </div>
               <p className='messageP'>{message}</p>
+              <div className='timestamp'>
+                <p >@{publicid}</p>
+                <p className='timestampP'>{formattedDate}</p>
+              </div>
             </li>
           </div>
         )
       } else {
         return (
           <div className='d-flex'>
-            <li className='usermessage rounded-4'>
-              <div>
-                <p >@{id}</p>
-                <p className='timestampP'>{timestamp}</p>
-              </div>
+            <li className='usermessage notmymessage rounded-4'>
               <p className='messageP'>{message}</p>
+              <div className='timestamp'>
+                <p >@{publicid}</p>
+                <p className='timestampP'>{formattedDate}</p>
+              </div>
             </li>
           </div>
         )
@@ -88,20 +93,33 @@ function Chatblock(props) {
   }
   return (
     <>
-      <div className='chatbody'>
-        {chatHistory.history ? <h1>Welcome in {chatHistory.history.chat_info.chat_name}</h1> : <h1>Welcome! Select room to chat</h1>}
-
-        <ul>
-          {messageList.slice().reverse().map((message, index) => (
-            <Message key={index} prop={message}></Message>
-          ))}
-        </ul>
-        <form className='sendblock input-group' onSubmit={sendMessage}>
-          <input type="text" placeholder='Type your message' className="form-control" />
-          <button type='submit' className='btn btn-light d-flex'>Send</button>
-        </form>
+      <div className='chatblock'>
+        <div className='chatname'>
+          {chatHistory.history ?
+            <h2>Welcome in {chatHistory.history.chat_info.chat_name}</h2> :
+            <h2>Welcome! Select room to chat</h2>
+          }
+        </div>
+        <div className='chatbody'>
+          <ul>
+            {messageList.slice().reverse().map((message, index) => (
+              <Message key={index} prop={message}></Message>
+            ))}
+          </ul>
+          <form className='sendblock input-group' onSubmit={sendMessage}>
+            <input type="text" placeholder='Type your message' className="form-control" />
+            <button type='submit' className='btn btn-light d-flex'>Send</button>
+          </form>
+        </div>
       </div>
+
     </>
   )
 }
 export default Chatblock
+
+
+
+
+
+
