@@ -4,7 +4,7 @@ import RoomsList from './RoomsList'
 import Cookies from 'js-cookie';
 
 function Sidepanel(props) {
-    const { user, chatHistory, setChatHistory } = props
+    const { user, setChatHistory } = props
     const handleLogout = async (e) => {
         const API_URL = process.env.REACT_APP_API_URL
         e.preventDefault();
@@ -34,9 +34,9 @@ function Sidepanel(props) {
                     </div>
                 </div >
                 <div className='SidepanelSearch'>
-                    <input type="text" className='form-control' placeholder='Find chat' />
+                    <input type="text" className='form-control' placeholder='Whom you looking for...' />
                 </div>
-                <RoomsList user={user} setChatHistory={setChatHistory}/>
+                <RoomsList user={user} setChatHistory={setChatHistory} />
                 <div className='d-flex '><button className='btn btn-light logOutBtn' onClick={handleLogout}>Log out</button></div>
             </div >
         </>

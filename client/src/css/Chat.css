@@ -36,7 +36,7 @@
     width: 100%;
     margin: 0 auto;
     z-index: 999;
-    height: 8vh;
+    height: 10vh;
     align-items: center;
     padding-left: 2vw;
 }
@@ -100,7 +100,10 @@ li p {
     justify-content: center !important;
     align-items: center !important;
 }
-
+.chatinfo h3, p{
+    padding: 0;
+    margin: 0;
+}
 .usermessage {
     max-width: 85%;
     min-width: 350px;

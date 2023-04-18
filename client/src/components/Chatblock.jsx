@@ -15,7 +15,7 @@ function Chatblock(props) {
         setMessageList([])
         const messages = chatHistory.history.data
         messages.slice().reverse().map((message, index) => {
-          setMessageList(prevState => [...prevState, [message.message_type, message.message_body, message.roommate_user_user_id, message.event_timestamp]])
+          setMessageList(prevState => [...prevState, [message.message_type, message.message_body, message.roommate_user_user_id, message.event_timestamp, message.user_name]])
         })
       } else {
         setMessageList([['infomessage', 'No messages yet...']])
@@ -31,9 +31,7 @@ function Chatblock(props) {
       })
     }
     socket.on('newMessage', (message) => {
-      console.log(message)
       if (message === '') { console.log('empty') }
-      console.log(message)
       setMessageList(prevState => [...prevState, [message.messageType, message.message, message.id, message.timestamp]])
     })
   }, [])
@@ -52,8 +50,8 @@ function Chatblock(props) {
     const messageType = prop.prop[0]
     const message = prop.prop[1]
     const id = prop.prop[2]
-    const publicid = id.substring(id.lastIndexOf('-') + 1)
     const timestamp = prop.prop[3]
+    const username = prop.prop[4]
     const date = new Date(timestamp)
     let localTime = date.toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit' });
     let localDate = date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' });
@@ -70,7 +68,7 @@ function Chatblock(props) {
             <li className='usermessage mymessage rounded-4'>
               <p className='messageP'>{message}</p>
               <div className='timestamp'>
-                <p >@{publicid}</p>
+                <p >{username}</p>
                 <p className='timestampP'>{formattedDate}</p>
               </div>
             </li>
@@ -82,7 +80,7 @@ function Chatblock(props) {
             <li className='usermessage notmymessage rounded-4'>
               <p className='messageP'>{message}</p>
               <div className='timestamp'>
-                <p >@{publicid}</p>
+                <p >{username}</p>
                 <p className='timestampP'>{formattedDate}</p>
               </div>
             </li>
@@ -96,8 +94,17 @@ function Chatblock(props) {
       <div className='chatblock'>
         <div className='chatname'>
           {chatHistory.history ?
-            <h2>Welcome in {chatHistory.history.chat_info.chat_name}</h2> :
-            <h2>Welcome! Select room to chat</h2>
+            <div className='chatinfo'>
+              <h3>Welcome in {chatHistory.history.chat_info.chat_name}</h3>
+              <span onClick={()=>(alert('hui'))}>
+                {chatHistory.history.chat_members.length === 1 ?
+                  <p className='text-muted'>{chatHistory.history.chat_members.length} mate</p>
+                  :
+                  <p className='text-muted'>{chatHistory.history.chat_members.length} mates</p>}
+              </span>
+            </div>
+            :
+            <h3>Welcome! Select room to chat</h3>
           }
         </div>
         <div className='chatbody'>
@@ -111,7 +118,7 @@ function Chatblock(props) {
             <button type='submit' className='btn btn-light d-flex'>Send</button>
           </form>
         </div>
-      </div>
+      </div >
 
     </>
   )

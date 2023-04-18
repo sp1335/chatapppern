@@ -24,7 +24,7 @@ body {
 .logOutBtn {
   z-index: 990;
   width: 100%;
-  height: 6vh;
+  height: 4vh;
 }
 
 .AuthComponent {

@@ -36,7 +36,7 @@ module.exports = (io) => {
                 const postMessage = await chatService.postMessage({ user_id, chat_id, message })
                 if (postMessage.status === 200) {
                     const { timestamp, message, user_id } = postMessage.data
-                    io.emit('newMessage', composeMessage(message, user_id, timestamp))
+                    socket.to(chat_id).emit('newMessage', composeMessage(message, user_id, timestamp))
                 }
             }
             // io.emit('message', messageObject)
