@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
 import io from "socket.io-client"
 
+import ChatParticipants from './ChatParticipants'
+
 function Chatblock(props) {
   const [messageList, setMessageList] = useState([])
   const { chatHistory, setChatHistory } = props
@@ -20,9 +22,11 @@ function Chatblock(props) {
       } else {
         setMessageList([['infomessage', 'No messages yet...']])
       }
-      console.log(chatHistory)
     }
   }, [chatHistory])
+  const showChatRoommates = () => {
+    console.log('first')
+  }
   useEffect(() => {
     if (access_token && user_id) {
       socket.emit('join', {
@@ -92,11 +96,13 @@ function Chatblock(props) {
   return (
     <>
       <div className='chatblock'>
+        {chatHistory.history ?
+          <ChatParticipants chatHistory={chatHistory.history} /> : null}
         <div className='chatname'>
           {chatHistory.history ?
             <div className='chatinfo'>
               <h3>Welcome in {chatHistory.history.chat_info.chat_name}</h3>
-              <span onClick={()=>(alert('hui'))}>
+              <span onClick={() => showChatRoommates()}>
                 {chatHistory.history.chat_members.length === 1 ?
                   <p className='text-muted'>{chatHistory.history.chat_members.length} mate</p>
                   :

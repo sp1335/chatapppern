@@ -35,7 +35,6 @@ class ChatService {
         }
     }
     async fetchHistory(chat_id, startPoint) {
-        // const fetchLastHundred = 'SELECT * FROM public.message WHERE chat_room_chatid = $1 ORDER BY event_timestamp DESC OFFSET $2 LIMIT 15;'
         const fetchLastHundred = `SELECT message.*, "user"."name" as user_name
         FROM public.message message
         JOIN public."user" "user" ON message.roommate_user_user_id = "user".user_id
@@ -44,7 +43,11 @@ class ChatService {
         OFFSET $2
         LIMIT 15;`
         const fetchChatInfo = 'SELECT * FROM public.chat_room WHERE chat_id = $1'
-        const fetchRommmatesInfo = 'SELECT roommate.roommate_role, roommate.user_user_id FROM public.chat_room JOIN public.roommate ON chat_room.chat_id = roommate.chat_room_chatid WHERE chat_room.chat_id = $1';
+        const fetchRommmatesInfo = `SELECT roommate.roommate_role, roommate.user_user_id, "user".name
+        FROM public.chat_room 
+        JOIN public.roommate ON chat_room.chat_id = roommate.chat_room_chatid 
+        JOIN public."user" ON roommate.user_user_id = "user".user_id
+        WHERE chat_room.chat_id = $1`;
         try {
             const res = await pool.query(fetchLastHundred, [chat_id, startPoint])
             const resChat = await pool.query(fetchChatInfo, [chat_id])
